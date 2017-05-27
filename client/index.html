@@ -31,7 +31,7 @@
       <select id="roomSelect"></select>
       <!-- Your HTML goes here! -->
       <form id="submitMessage" method="get">
-        <input type="text" placeholder="type your message here">
+        <input type="text" id="message" placeholder="type your message here">
         <input type="submit">
       </form>
     </div>
@@ -39,6 +39,14 @@
     <script>
       $(document).ready(function() {
         app.init();
+        
+        $('#submitMessage').on('submit', function(event) {
+          event.preventDefault();
+          var message = $('#message').val();
+          var username = window.location.search.slice(10);
+          console.log(message);
+          console.log(username);
+        });
         
         
       });

@@ -131,9 +131,9 @@ app.renderRoom = function(roomName) {
 };
 
 app.hasRoom = function(obj) {
-  // if (obj.roomname.length === 0 || obj.roomname === undefined) {
-  //   obj.roomname = 'main';
-  // }
+  if ( || obj.roomname.length === 0 || obj.roomname === undefined) {
+    obj.roomname = 'main';
+  }
   var room = $(`#roomSelect option[value = ${obj.roomname}]`);
   if (room[0]) {
     return true;
