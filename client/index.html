@@ -28,25 +28,19 @@
     <div id="main">
       <h1>chatterbox</h1>
       <span><strong>Room:</strong></span>
-      <select id="roomSelect"></select>
+      <select id="roomSelect">
+        <option value="All">All</option>
+      </select>
       <!-- Your HTML goes here! -->
-      <form id="send" method="get">
-        <input type="text" id="message" placeholder="type your message here">
-        <input class= "submit" type="submit">
+      <form action="#" id="send" method="POST">
+        <input type="text" id="message" placeholder="type your message here" />
+        <input class="submit" type="submit" />
       </form>
     </div>
     <div id="chats"></div>
     <script>
       $(document).ready(function() {
         app.init();
-        var roomName;
-        $('#roomSelect').on('change', function(event) {
-          roomName = $(this).val();
-        });
-        
-        $('#send').on('submit', function(event) {
-          app.handleSubmit();
-        });       
       });
     </script>
   </body>

@@ -28,28 +28,11 @@ var app = {};
 app.server = 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages';
 app.chat = $('#chats');
 
-
 app.init = function() {
-  // create an array to store all the fetch messages  
-  // var message = app fetch message
-  // render the message in the chat box
-  // start a for loop to start at the rendermessage end
-  // filter the chat room
-    // create the chatroom
-    // add the messages to the corresponding chatroom
-    
-  // set time out in the function to repeatly fetch and sort through the data
-  
-  //***set a see more chats***
-  // var messages = app.fetch();
-  // console.log(messages);
-  // var fetchNext = function() {
-  //   app.clearMessages();
-  //   app.fetch();
-  //   setTimeout(fetchNext, 3000);  
-  // };
-  // fetchNext();
+          
   app.fetch();
+  $('#send').on('submit', app.handleSubmit);
+  $('.chat .username').on('click', app.handleUsernameClick); 
 };
 
 app.send = function(message) {
@@ -72,7 +55,7 @@ app.send = function(message) {
 app.fetch = function() {
 
   $.ajax({
-  // This is the url you should use to communicate with the parse API server.
+
     url: app.server,
     type: 'GET',
     data: 'order=-createdAt',
@@ -81,19 +64,12 @@ app.fetch = function() {
       // console.log('fetch: received message,' + JSON.stringify(data.results, null, 2));
       var count = 0;
       for (let i = 0; i < data.results.length; i++) {
-        // let name = data.results[i].username;
-        // let room = data.results[i].roomname;
-        // let text = data.results[i].text;
-        // if (name.includes('<script>') || text.includes('<script>') || room.includes('<script>')) {
-        //   messsage.username = 'Attempted Hack';
-        //   message.roomname = 'Attempted Hack';
-        //   message.text = 'Attempted Hack';
-        // }
+
         if (count === 20) {
           return;
         }
         if (app.isValidMessage(data.results[i])) {
-          //do something
+
           if (!app.hasRoom(data.results[i])) {
             app.renderRoom(data.results[i].roomname);
           }          
@@ -115,18 +91,9 @@ app.clearMessages = function() {
 };
 
 app.renderMessage = function(message) {
-  // if (message.username.includes('<script>') || message.text.includes('<script>') || message.roomname.includes('<script>')) {
-  //   messsage.username = 'Attempted Hack';
-  //   message.roomname = 'Attempted Hack';
-  //   message.text = 'Attempted Hack';
-  // }
-  // let userMessage = JSON.stringify(message.text);
-  // let userName = JSON.stringify(message.username);
+  var username = $('<a href="#" class"username">' + xssFilters.inHTMLData(message.username) + '</a>');
+  $(username).on('click', app.handleUsernameClick);
   $('#chats').append(`<div class="chat"><a href="#" class="username">${xssFilters.inHTMLData(message.username)}</a>:<br> ${xssFilters.inHTMLData(message.text)}</div>`);
-  // go to #roomSelect
-    // check if roomname exist
-    // if exist post in that roomchat
-    // else post in regular channael
 };
 
 app.renderRoom = function(roomName) {
@@ -155,43 +122,25 @@ app.isValidMessage = function(obj) {
     }    
   }
   
-  
   return false;
 };
 
 app.handleUsernameClick = function() {
-  
+  console.log(this);
 };
 
-app.handleSubmit = function() {
+app.handleSubmit = function(event) {
   event.preventDefault();
+  
   var text = $('#message').val();
-  var userName = window.location.search.slice(10);
-  roomName = roomName || $('#roomSelect option').val();
+  var roomName = $('#roomSelect option:selected').val();
+  console.log(roomName);
   var message = {
     text: text, 
-    username: userName, 
+    username: window.location.search.slice(10), 
     roomname: roomName
   };
   $.when(app.send(message)).then(app.clearMessages()).then(app.fetch()); 
 };
-
-// app.sanitizeInput = function(string) {
-//   //<script>
-//   //return 
-// };
-
-
-
-
-// check roomname exist
-  // if true 
-    // append message to roomname
-  // else 
-    // create room and append message to that room 
-
-
-
-// install npm install xss-filters
 
 
