@@ -78,7 +78,7 @@ app.fetch = function() {
     data: 'order=-createdAt',
     contentType: 'application/json',
     success: function (data) {
-      console.log('fetch: received message,' + JSON.stringify(data.results, null, 2));
+      // console.log('fetch: received message,' + JSON.stringify(data.results, null, 2));
       var count = 0;
       for (let i = 0; i < data.results.length; i++) {
         // let name = data.results[i].username;
@@ -122,7 +122,7 @@ app.renderMessage = function(message) {
   // }
   // let userMessage = JSON.stringify(message.text);
   // let userName = JSON.stringify(message.username);
-  $('#chats').append(`<div><a href="#" class="username">${xssFilters.inHTMLData(message.username)}</a>:<br> ${xssFilters.inHTMLData(message.text)}</div>`);
+  $('#chats').append(`<div class="chat"><a href="#" class="username">${xssFilters.inHTMLData(message.username)}</a>:<br> ${xssFilters.inHTMLData(message.text)}</div>`);
   // go to #roomSelect
     // check if roomname exist
     // if exist post in that roomchat
@@ -140,7 +140,6 @@ app.renderRoom = function(roomName) {
 app.hasRoom = function(obj) {
   obj.roomname = obj.roomname.split(' ').join('_');
   var room = $(`#roomSelect option[value=${obj.roomname}]`);
-  console.log(room);
   if (room[0]) {
 
     return true;
@@ -149,10 +148,32 @@ app.hasRoom = function(obj) {
 };
 
 app.isValidMessage = function(obj) {
+  
   if (obj.roomname && obj.text && obj.username) {
-    return true;
+    if (!obj.roomname.includes('<script>') || !obj.username.includes('<script>') || !obj.text.includes('<script>')) {
+      return true;
+    }    
   }
+  
+  
   return false;
+};
+
+app.handleUsernameClick = function() {
+  
+};
+
+app.handleSubmit = function() {
+  event.preventDefault();
+  var text = $('#message').val();
+  var userName = window.location.search.slice(10);
+  roomName = roomName || $('#roomSelect option').val();
+  var message = {
+    text: text, 
+    username: userName, 
+    roomname: roomName
+  };
+  $.when(app.send(message)).then(app.clearMessages()).then(app.fetch()); 
 };
 
 // app.sanitizeInput = function(string) {

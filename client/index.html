@@ -30,25 +30,23 @@
       <span><strong>Room:</strong></span>
       <select id="roomSelect"></select>
       <!-- Your HTML goes here! -->
-      <form id="submitMessage" method="get">
+      <form id="send" method="get">
         <input type="text" id="message" placeholder="type your message here">
-        <input type="submit">
+        <input class= "submit" type="submit">
       </form>
     </div>
     <div id="chats"></div>
     <script>
       $(document).ready(function() {
         app.init();
-        
-        $('#submitMessage').on('submit', function(event) {
-          event.preventDefault();
-          var message = $('#message').val();
-          var username = window.location.search.slice(10);
-          console.log(message);
-          console.log(username);
+        var roomName;
+        $('#roomSelect').on('change', function(event) {
+          roomName = $(this).val();
         });
         
-        
+        $('#send').on('submit', function(event) {
+          app.handleSubmit();
+        });       
       });
     </script>
   </body>
