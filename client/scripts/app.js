@@ -79,7 +79,8 @@ app.fetch = function() {
     contentType: 'application/json',
     success: function (data) {
       console.log('fetch: received message,' + JSON.stringify(data.results, null, 2));
-      for (let i = 0; i < 10; i++) {
+      var count = 0;
+      for (let i = 0; i < data.results.length; i++) {
         // let name = data.results[i].username;
         // let room = data.results[i].roomname;
         // let text = data.results[i].text;
@@ -88,12 +89,18 @@ app.fetch = function() {
         //   message.roomname = 'Attempted Hack';
         //   message.text = 'Attempted Hack';
         // }
-        
-        if (!app.hasRoom(data.results[i].roomname)) {
-          app.renderRoom(data.results[i].roomname);
+        if (count === 20) {
+          return;
         }
+        if (app.isValidMessage(data.results[i])) {
+          //do something
+          if (!app.hasRoom(data.results[i])) {
+            app.renderRoom(data.results[i].roomname);
+          }          
+          app.renderMessage(data.results[i]);
+          count++;
+        } 
         
-        app.renderMessage(data.results[i]);
       }
     },
     error: function (data) {
@@ -115,7 +122,7 @@ app.renderMessage = function(message) {
   // }
   // let userMessage = JSON.stringify(message.text);
   // let userName = JSON.stringify(message.username);
-  $('#chats').append(`<div><a href="#" class="addUser">${xssFilters.inHTMLData(message.username)}</a>:<br> ${xssFilters.inHTMLData(message.text)}</div>`);
+  $('#chats').append(`<div><a href="#" class="username">${xssFilters.inHTMLData(message.username)}</a>:<br> ${xssFilters.inHTMLData(message.text)}</div>`);
   // go to #roomSelect
     // check if roomname exist
     // if exist post in that roomchat
@@ -131,11 +138,18 @@ app.renderRoom = function(roomName) {
 };
 
 app.hasRoom = function(obj) {
-  if ( || obj.roomname.length === 0 || obj.roomname === undefined) {
-    obj.roomname = 'main';
-  }
-  var room = $(`#roomSelect option[value = ${obj.roomname}]`);
+  obj.roomname = obj.roomname.split(' ').join('_');
+  var room = $(`#roomSelect option[value=${obj.roomname}]`);
+  console.log(room);
   if (room[0]) {
+
+    return true;
+  }
+  return false;
+};
+
+app.isValidMessage = function(obj) {
+  if (obj.roomname && obj.text && obj.username) {
     return true;
   }
   return false;
