@@ -29,10 +29,9 @@ app.server = 'http://parse.sfm6.hackreactor.com/chatterbox/classes/messages';
 app.chat = $('#chats');
 
 app.init = function() {
-          
-  app.fetch();
+      
+  $.when(app.fetch()).then(function() { $('.chat .username').on('click', app.handleUsernameClick); });
   $('#send').on('submit', app.handleSubmit);
-  $('.chat .username').on('click', app.handleUsernameClick); 
 };
 
 app.send = function(message) {
@@ -91,8 +90,8 @@ app.clearMessages = function() {
 };
 
 app.renderMessage = function(message) {
-  var username = $('<a href="#" class"username">' + xssFilters.inHTMLData(message.username) + '</a>');
-  $(username).on('click', app.handleUsernameClick);
+  // var username = $('<a href="#" class"username">' + xssFilters.inHTMLData(message.username) + '</a>');
+  // $(username).on('click', app.handleUsernameClick);
   $('#chats').append(`<div class="chat"><a href="#" class="username">${xssFilters.inHTMLData(message.username)}</a>:<br> ${xssFilters.inHTMLData(message.text)}</div>`);
 };
 
@@ -142,5 +141,9 @@ app.handleSubmit = function(event) {
   };
   $.when(app.send(message)).then(app.clearMessages()).then(app.fetch()); 
 };
+
+// app.attachListeners = function() {
+//   $('.chat .username').on('click', app.handleUsernameClick);
+// }
 
 
